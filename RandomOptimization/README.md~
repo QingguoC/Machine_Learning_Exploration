@@ -1,0 +1,28 @@
+## Explore Random Hill Climbing, Simulated Annealing, Genetic Algorithm, and MIMIC on 
+
+In this assignment, I used JAVA to run optimizations of different problems. 
+All java codes are in Assignment2RandomOptimization folder.
+
+The train and test dataset of cancer classification is under Assignment2RandomOptimization/src/data folder.
+
+
+To run JAVA codes, install (if necessary) and run Intellij, and open folder Assignment2RandomOptimization as a project. 
+
+Mark src as the source folder. 
+
+Add Assignment2RandomOptimization/libs/ABAGAIL.jar to library.
+
+Then we are ready to run the RO codes. 
+
+For cancer classification problem, the codes are in BreastCancer.java, simply run the main method to conduct the analysis.
+
+For the second part of the assignment, run the main methods in FourPeaks.java, CountOnes.java, TravelingSalesman.java. 
+
+
+All the output of files from the analysis are also in Assignment2RandomOptimization/src/data folder.
+
+To plot the result, go to Assignment2Rcode folder, install (if necessary) and run R Studio with ggplot2 and reshape2 packages installed. 
+
+Open the MachineLearningAssignment2Plots.RMD file in R Studio, and run all the R codes in the code chunks in sequence. 
+
+The plots will be saved in Assignment2Rcode folder. 

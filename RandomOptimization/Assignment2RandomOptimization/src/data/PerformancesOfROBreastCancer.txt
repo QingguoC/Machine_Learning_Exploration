@@ -1,0 +1,4 @@
+Algorithm,TrainingAccuracy,TestAccuracy,TrainingTime,TestingTimeOnTrain,TestingTimeOnTest
+RHC,98.681,96.491,13.722,0.030,0.007
+SA,98.022,98.246,13.292,0.009,0.002
+GA,99.341,98.246,695.279,0.008,0.002

@@ -1,0 +1,13 @@
+### Cancer and Leaf Classification by NN, SVM, Tree, Boosting, KNN
+
+I run all my codes in jupyter notebook (ipython notebook). 
+The codes are in two ipynb files Breast_Cancer_Classification.ipynb for breast cancer classification, and Leaf_Classification.ipynb for leaf classification. 
+First, install anaconda first if not installed yet following instruction on https://docs.anaconda.com/anaconda/install/.
+I created and run my codes on Windows environment, but I think mac or linux user also can run my ipynb files by jupyter notebook.
+update sklearn module to version: 0.19.0 if needed by run "conda update scikit-learn"
+put my two datasets breast_cancer.csv and leaf.csv in the same directory with two ipynb files.
+change working directory in CMD or terminal to the folder containing all my files.
+type command "juypter notebook", then an ipython notebook (a localhost website working envonriment) will pop up
+then double click two ipynb files on the directory list shown on the web browser
+all my codes and the result tables and figures will be shown on the two ipython notebooks.
+To rerun my codes, you can either run the code sections in sequence from the very beginning to the end or choose restart & run all in Kernel drop down list.

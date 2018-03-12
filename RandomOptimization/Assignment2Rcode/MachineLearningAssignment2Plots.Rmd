@@ -1,0 +1,819 @@
+---
+title: "MachineLearningAssignment2Plots"
+author: "Qingguo Chen"
+date: "October 8, 2017"
+output: pdf_document
+---
+
+```{r}
+library(ggplot2)
+library(reshape2)
+```
+
+
+Learning curves of  RHC, SA and GA on Breast_Cancer training set
+```{r}
+irLogs = read.csv("../Assignment2RandomOptimization/src/data/initialRunTrainingLogs.txt")
+irLogs_Tall=melt(irLogs,"Iteration",variable.name = "Algorithm",value.name = "SumOfSquaresError")
+```
+
+
+```{r}
+png("LearningCurveWithDefaultSettingROsCancer.png",800,500)
+  
+g = ggplot(irLogs_Tall,aes(Iteration,SumOfSquaresError,group=Algorithm,col=Algorithm))+
+  geom_line()+
+  ggtitle("Before Parameter Search")+
+  theme(
+    legend.position = c(.95, .95),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4))
+    )
+
+print(g)
+dev.off()
+print(g)
+```
+
+
+Performance curves of SA with different Ts
+```{r}
+sa_t_p = read.csv("../Assignment2RandomOptimization/src/data/PerformancesOfSAwithTs.txt")
+sa_t_p[,"T"] = as.factor(sa_t_p[,"T"])
+sa_p_tall=melt(sa_t_p,"T",variable.name = "Train_Test",value.name = "Accuracy")
+saTpSummary =aggregate(sa_p_tall["Accuracy"],by =sa_p_tall[c("T","Train_Test")],function(X) c(mean=mean(X),sd=sd(X),N=length(X)) )
+saTpSummary=do.call(data.frame,saTpSummary)
+names(saTpSummary)[3:5]=c("Accuracy","sd","N")
+saTpSummary$se = saTpSummary$sd/sqrt(saTpSummary$N)
+```
+
+
+
+
+
+```{r}
+png("StimulatedAnnealingT.png",800,500)
+  
+g = ggplot(saTpSummary,aes(T,Accuracy,group=Train_Test,col=Train_Test))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Accuracy-se,ymax=Accuracy+se),width=0.2)+
+  ylab("Accuracy")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Training and Test Accuracy of Stimulated Annealing by T")+
+  theme(
+    legend.position = c(.05, .05),
+    legend.justification = c("left", "bottom"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+```
+Performance curves of SA with different Coolings
+```{r}
+sa_c_p = read.csv("../Assignment2RandomOptimization/src/data/PerformancesOfSAwithCoolings.txt")
+sa_c_p$Cooling = as.factor(sa_c_p$Cooling)
+sa_c_tall=melt(sa_c_p,"Cooling",variable.name = "Train_Test",value.name = "Accuracy")
+saCpSummary =aggregate(sa_c_tall["Accuracy"],by =sa_c_tall[c("Cooling","Train_Test")],function(X) c(mean=mean(X),sd=sd(X),N=length(X)) )
+saCpSummary=do.call(data.frame,saCpSummary)
+names(saCpSummary)[3:5]=c("Accuracy","sd","N")
+saCpSummary$se = saCpSummary$sd/sqrt(saCpSummary$N)
+```
+
+
+
+
+
+```{r}
+png("StimulatedAnnealingCooling.png",800,500)
+  
+g = ggplot(saCpSummary,aes(Cooling,Accuracy,group=Train_Test,col=Train_Test))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Accuracy-se,ymax=Accuracy+se),width=0.2)+
+  ylab("Accuracy")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Training and Test Accuracy of Stimulated Annealing by Cooling")+
+  theme(
+    legend.position = c(.05, .05),
+    legend.justification = c("left", "bottom"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+Performance curves of GA with different MatingRate
+```{r}
+ga_mating_p = read.csv("../Assignment2RandomOptimization/src/data/PerformancesOfGAwithMatingRates.txt")
+ga_mating_p$MatingRate = as.factor(ga_mating_p$MatingRate)
+ga_mating_tall=melt(ga_mating_p,"MatingRate",variable.name = "Train_Test",value.name = "Accuracy")
+ga_matingpSummary =aggregate(ga_mating_tall["Accuracy"],by =ga_mating_tall[c("MatingRate","Train_Test")],function(X) c(mean=mean(X),sd=sd(X),N=length(X)) )
+ga_matingpSummary=do.call(data.frame,ga_matingpSummary)
+names(ga_matingpSummary)[3:5]=c("Accuracy","sd","N")
+ga_matingpSummary$se = ga_matingpSummary$sd/sqrt(ga_matingpSummary$N)
+```
+
+
+
+
+
+```{r}
+png("GAMatingRate.png",800,500)
+  
+g = ggplot(ga_matingpSummary,aes(MatingRate,Accuracy,group=Train_Test,col=Train_Test))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Accuracy-se,ymax=Accuracy+se),width=0.2)+
+  ylab("Accuracy")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Training and Test Accuracy of Genetic Algorithm by Mating Rates")+
+  theme(
+    legend.position = c(.5, .05),
+    legend.justification = c("bottom"),
+    legend.box.just = "center",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+Performance curves of GA with different MutationRate
+```{r}
+ga_mutate_p = read.csv("../Assignment2RandomOptimization/src/data/PerformancesOfGAwithMutationRates.txt")
+ga_mutate_p$MutationRate = as.factor(ga_mutate_p$MutationRate)
+ga_mutate_tall=melt(ga_mutate_p,"MutationRate",variable.name = "Train_Test",value.name = "Accuracy")
+ga_mutateSummary =aggregate(ga_mutate_tall["Accuracy"],by =ga_mutate_tall[c("MutationRate","Train_Test")],function(X) c(mean=mean(X),sd=sd(X),N=length(X)) )
+ga_mutateSummary=do.call(data.frame,ga_mutateSummary)
+names(ga_mutateSummary)[3:5]=c("Accuracy","sd","N")
+ga_mutateSummary$se = ga_mutateSummary$sd/sqrt(ga_mutateSummary$N)
+```
+
+
+
+
+
+```{r}
+png("GAMutationRate.png",800,500)
+  
+g = ggplot(ga_mutateSummary,aes(MutationRate,Accuracy,group=Train_Test,col=Train_Test))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Accuracy-se,ymax=Accuracy+se),width=0.2)+
+  ylab("Accuracy")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Training and Test Accuracy of Genetic Algorithm by Mutation Rates")+
+  theme(
+    legend.position = c(.5, .05),
+    legend.justification = c("bottom"),
+    legend.box.just = "center",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+Performance curves of three ROs on cancer classification
+
+```{r}
+ROsCancerP = read.csv("../Assignment2RandomOptimization/src/data/evaluesOfThreeROsForCancers.txt")
+ROsCancerP$Nodes = as.factor(ROsCancerP$Nodes)
+ROsCancerP$Iteration = as.factor(ROsCancerP$Iteration)
+
+ROsCancerPSummary =aggregate(ROsCancerP["Evaluation"],by =ROsCancerP[c("Algorithm","Iteration","Nodes","TrainTest")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+
+ROsCancerPSummary=do.call(data.frame,ROsCancerPSummary)
+names(ROsCancerPSummary)[5:7]=c("Accuracy","sd","len")
+ROsCancerPSummary$se = ROsCancerPSummary$sd/sqrt(ROsCancerPSummary$len)
+ROsCancerPSummary$legend = paste(ROsCancerPSummary$Algorithm,ROsCancerPSummary$TrainTest)
+```
+
+
+
+
+
+```{r}
+png("FinalPeformance3ROsCancer.png",800,500)
+  
+nodeName = c("10"="Number of Hidden Layer Nodes = 10", "80"="Number of Hidden Layer Nodes = 80" )
+g = ggplot(ROsCancerPSummary,aes(Iteration,Accuracy,group=legend,col=legend))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Accuracy-se,ymax=Accuracy+se),width=0.2)+
+  ylab("Accuracy")+
+  scale_y_continuous()+
+  facet_grid(.~Nodes,labeller = as_labeller(nodeName))+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Training and Test Accuracy of Three RO Algorithms by Iteration and Hidden layer nodes")+
+  theme(
+    legend.position = c(.95, .05),
+    legend.justification = c("right","bottom"),
+    legend.box.just = "center",
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+Training time and Test time Evaluation
+
+```{r}
+ROsCancerPt = read.csv("../Assignment2RandomOptimization/src/data/evaluesOfThreeROsForCancersTime.txt")
+ROsCancerPt$Nodes = as.factor(ROsCancerPt$Nodes)
+ROsCancerPt$Iteration = as.factor(ROsCancerPt$Iteration)
+ROsCancerPt = ROsCancerPt[ROsCancerPt$TrainTest == "train", ]
+ROsCancerTimeSummary =aggregate(ROsCancerPt["Time"],by =ROsCancerPt[c("Algorithm","Iteration","Nodes")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+
+ROsCancerTimeSummary=do.call(data.frame,ROsCancerTimeSummary)
+names(ROsCancerTimeSummary)[4:6]=c("Time","sd","len")
+ROsCancerTimeSummary$se = ROsCancerTimeSummary$sd/sqrt(ROsCancerTimeSummary$len)
+```
+
+
+
+
+
+```{r}
+png("CancerIterationTime.png",800,500)
+  
+g = ggplot(ROsCancerTimeSummary[ROsCancerTimeSummary$Nodes==60,],aes(Iteration,Time,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Time-se,ymax=Time+se),width=0.2)+
+  ylab("Training Time (seconds)")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Training time of Three RO Algorithms\nOn Cancer classification by Iteration with Nodes = 60")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+
+```{r}
+png("CancerNodeTime.png",800,500)
+  
+g = ggplot(ROsCancerTimeSummary[ROsCancerTimeSummary$Iteration==60,],aes(Nodes,Time,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Time-se,ymax=Time+se),width=0.2)+
+  ylab("Training Time (seconds)")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Training time of Three RO Algorithms\nOn Cancer problem by N with max Iteration = 60")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+
+Learning curves of  RHC, SA and GA on Breast_Cancer training set using optimized settings
+```{r}
+bcLogs = read.csv("../Assignment2RandomOptimization/src/data/RunTrainingLogsBreastCancer.txt")
+bcLogs_Tall=melt(bcLogs,"Iteration",variable.name = "Algorithm",value.name = "SumOfSquaresError")
+```
+
+
+```{r}
+png("LearningCurveWithOptimizedSettingROsCancer.png",800,500)
+  
+g = ggplot(bcLogs_Tall,aes(Iteration,SumOfSquaresError,group=Algorithm,col=Algorithm))+geom_line()+
+  ggtitle("After Parameter Search")+
+  theme(
+    legend.position = c(.95, .95),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4))
+    )
+
+print(g)
+dev.off()
+print(g)
+```
+
+Learning curves of  RHC, SA and GA on Breast_Cancer training set using optimized settings
+```{r}
+bcLogsLessNode = read.csv("../Assignment2RandomOptimization/src/data/RunTrainingLogsBreastCancerWithLessNodes.txt")
+bcLogsLessNode_Tall=melt(bcLogsLessNode,"Iteration",variable.name = "Algorithm",value.name = "SumOfSquaresError")
+```
+
+
+```{r}
+ggplot(bcLogsLessNode_Tall,aes(Iteration,SumOfSquaresError,group=Algorithm,col=Algorithm))+geom_line()
+```
+
+
+```{r}
+FourPeaks = read.csv("../Assignment2RandomOptimization/src/data/evaluesOfFourROsForFourPeaksWithNs.txt")
+FourPeaks$Iteration = as.factor(FourPeaks$Iteration)
+FourPeaks$N = as.factor(FourPeaks$N)
+```
+
+```{r}
+png("FourPeaksBoxPlot.png",800,500)
+  
+g = ggplot(FourPeaks[FourPeaks$Iteration==1000 & FourPeaks$N==300,],aes(reorder(Algorithm, -Evaluation, median),Evaluation, fill = Algorithm))+geom_boxplot()+scale_x_discrete("Random Optimization Algorithms")+
+  ggtitle("Evaluations of Four RO Algorithms On Four Peaks when Iteration = 1000 and N = 300")+
+  theme(
+    legend.position = c(.95, .95),
+    legend.justification = c("right","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+meanFourPeaks = aggregate(FourPeaks["Evaluation"],by =FourPeaks[c("Algorithm","Iteration","N")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanFourPeaks=do.call(data.frame,meanFourPeaks)
+names(meanFourPeaks)[4:6]=c("Evaluation","sd","Len")
+meanFourPeaks$se = meanFourPeaks$sd/sqrt(meanFourPeaks$Len)
+```
+
+```{r}
+png("FourPeaksIteration.png",800,500)
+  
+g = ggplot(meanFourPeaks[meanFourPeaks$N==300,],aes(Iteration,Evaluation,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Evaluation-se,ymax=Evaluation+se),width=0.2)+
+  ylab("Evaluation")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Four RO Algorithms On Four Peaks by Iteration with N = 300")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+```{r}
+png("FourPeaksN.png",800,500)
+  
+g = ggplot(meanFourPeaks[meanFourPeaks$Iteration==1000,],aes(N,Evaluation,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Evaluation-se,ymax=Evaluation+se),width=0.2)+
+  ylab("Evaluation")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Four RO Algorithms On Four Peaks by N with max Iteration = 1000")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+
+```{r}
+FourPeaksT = read.csv("../Assignment2RandomOptimization/src/data/evaluesOfFourROsForFourPeaksWithNsTime.txt")
+FourPeaksT$Iteration = as.factor(FourPeaksT$Iteration)
+FourPeaksT$N = as.factor(FourPeaksT$N)
+meanFourPeaksTime = aggregate(FourPeaksT["TrainingTime"],by =FourPeaksT[c("Algorithm","Iteration","N")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanFourPeaksTime=do.call(data.frame,meanFourPeaksTime)
+names(meanFourPeaksTime)[4:6]=c("TrainingTime","sd","Len")
+meanFourPeaksTime$se = meanFourPeaksTime$sd/sqrt(meanFourPeaksTime$Len)
+```
+
+```{r}
+png("FourPeaksIterationTime.png",800,500)
+  
+g = ggplot(meanFourPeaksTime[meanFourPeaksTime$N==200,],aes(Iteration,TrainingTime,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=TrainingTime-se,ymax=TrainingTime+se),width=0.2)+
+  ylab("Training Time (nano seconds)")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of training running time of Four RO Algorithms On Four Peaks by Iteration with N = 60")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+```{r}
+png("FourPeaksNTime.png",800,500)
+  
+g = ggplot(meanFourPeaksTime[meanFourPeaksTime$Iteration==60,],aes(N,TrainingTime,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=TrainingTime-se,ymax=TrainingTime+se),width=0.2)+
+  ylab("Training Time (nano seconds)")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Training time of Four RO Algorithms On 4Peaks by N with max Iteration = 60")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+
+
+```{r}
+TSP = read.csv("../Assignment2RandomOptimization/src/data/evaluesOfFourROsForTSP.txt")
+TSP$Iteration = as.factor(TSP$Iteration)
+TSP$NumberOfPoints = as.factor(TSP$NumberOfPoints)
+```
+
+```{r}
+png("TSPBoxplot.png",800,500)
+  
+g =ggplot(TSP[TSP$Iteration==400 & TSP$NumberOfPoints == 80,],aes(reorder(Algorithm, -Evaluation, median),Evaluation, fill = Algorithm))+geom_boxplot()+scale_x_discrete("Random Optimization Algorithms")+
+  ylab("Evaluation")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Four RO Algorithms On TSPs at Iteration=400,N = 200")+
+  theme(
+    legend.position = c(.95, .95),
+    legend.justification = c("right","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+meanTSP = aggregate(TSP["Evaluation"],by =TSP[c("Algorithm","Iteration","NumberOfPoints")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanTSP=do.call(data.frame,meanTSP)
+names(meanTSP)[4:6]=c("Evaluation","sd","len")
+meanTSP$se = meanTSP$sd/sqrt(meanTSP$len)
+```
+
+```{r}
+png("TSPIteration.png",800,500)
+  
+g = ggplot(meanTSP[meanTSP$NumberOfPoints==80,],aes(Iteration,Evaluation,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Evaluation-se,ymax=Evaluation+se),width=0.2)+
+  ylab("Evaluation")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Four RO Algorithms On Traveling Salesman Problem by Iteration with N = 80")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+```{r}
+png("TSPN.png",800,500)
+  
+g = ggplot(meanTSP[meanTSP$Iteration==400,],aes(NumberOfPoints,Evaluation,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Evaluation-se,ymax=Evaluation+se),width=0.2)+
+  ylab("Evaluation")+
+xlab("N")+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Four RO Algorithms On Traveling Salesman Problems by Number Of Points (400 iteration)")+
+  theme(
+    legend.position = c(.95, .95),
+    legend.justification = c("right","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+
+```{r}
+TSPt = read.csv("../Assignment2RandomOptimization/src/data/evaluesOfFourROsForTSPTime.txt")
+TSPt$Iteration = as.factor(TSPt$Iteration)
+TSPt$NumberOfPoints = as.factor(TSPt$NumberOfPoints)
+meanTSPTime = aggregate(TSPt["TrainingTime"],by =TSPt[c("Algorithm","Iteration","NumberOfPoints")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanTSPTime=do.call(data.frame,meanTSPTime)
+names(meanTSPTime)[4:6]=c("TrainingTime","sd","Len")
+meanTSPTime$se = meanTSPTime$sd/sqrt(meanTSPTime$Len)
+```
+
+```{r}
+png("TSPIterationTime.png",800,500)
+  
+g = ggplot(meanTSPTime[meanTSPTime$N==60,],aes(Iteration,TrainingTime,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=TrainingTime-se,ymax=TrainingTime+se),width=0.2)+
+  ylab("Training Time (nano seconds)")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of train time of Four RO Algorithms On TSP by Iteration with NumberOfPoints = 60")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+
+```{r}
+
+
+png("TSPNTime.png",800,500)
+  
+g = ggplot(meanTSPTime[meanTSPTime$Iteration==60,],aes(NumberOfPoints,TrainingTime,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=TrainingTime-se,ymax=TrainingTime+se),width=0.2)+
+  ylab("Training Time (nano seconds)")+
+xlab("N")+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Training time of Four RO Algorithms On TSP by NumberOfPoints with max Iteration = 60")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+```{r}
+COs = read.csv("../Assignment2RandomOptimization/src/data/evaluesOfFourROsForCountONEs.txt")
+COs$Iteration = as.factor(COs$Iteration)
+COs$N = as.factor(COs$N)
+```
+
+```{r}
+png("COsBoxPlot.png",800,500)
+  
+g = ggplot(COs[COs$Iteration==400 & COs$N == 700,],aes(reorder(Algorithm, -Evaluation, median),Evaluation, fill = Algorithm))+geom_boxplot()+scale_x_discrete("Random Optimization Algorithms")+
+  ggtitle("Evaluations of Four RO Algorithms On COs at Iteration=400,N = 700")+
+  theme(
+    legend.position = c(.95, .95),
+    legend.justification = c("right","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+meanCOs = aggregate(COs["Evaluation"],by =COs[c("Algorithm","Iteration","N")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanCOs=do.call(data.frame,meanCOs)
+names(meanCOs)[4:6]=c("Evaluation","sd","len")
+meanCOs$se = meanCOs$sd/sqrt(meanCOs$len)
+```
+
+```{r}
+png("COsIteration.png",800,500)
+  
+g = ggplot(meanCOs[meanCOs$N ==700,],aes(Iteration,Evaluation,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Evaluation-se,ymax=Evaluation+se),width=0.2)+
+  ylab("Evaluation")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Four RO Algorithms On CountOnes by Iteration with N = 700")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+```{r}
+png("COsN.png",800,500)
+  
+g = ggplot(meanCOs[meanCOs$Iteration==400,],aes(N,Evaluation,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=Evaluation-se,ymax=Evaluation+se),width=0.2)+
+  ylab("Evaluation")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Four RO Algorithms On CountONes by N with max Iteration = 400")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+```{r}
+COst = read.csv("../Assignment2RandomOptimization/src/data/evaluesOfFourROsForCountONEsTime.txt")
+COst$Iteration = as.factor(COst$Iteration)
+COst$N = as.factor(COst$N)
+
+meanCOsTime = aggregate(COst["TrainingTime"],by =COst[c("Algorithm","Iteration","N")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanCOsTime=do.call(data.frame,meanCOsTime)
+names(meanCOsTime)[4:6]=c("TrainingTime","sd","Len")
+meanCOsTime$se = meanCOsTime$sd/sqrt(meanCOsTime$Len)
+```
+
+```{r}
+png("COsIterationTime.png",800,500)
+  
+g = ggplot(meanCOsTime[meanCOsTime$N==60,],aes(Iteration,TrainingTime,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=TrainingTime-se,ymax=TrainingTime+se),width=0.2)+
+  ylab("Training Time (nano seconds)")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of training time of Four RO Algorithms On CountONes by Iteration with N = 60")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+
+
+```{r}
+png("COsNTime.png",800,500)
+  
+g = ggplot(meanCOsTime[meanCOsTime$Iteration==60,],aes(N,TrainingTime,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=TrainingTime-se,ymax=TrainingTime+se),width=0.2)+
+  ylab("Training Time (nano seconds)")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Training time of Four RO Algorithms On CountONes by N with max Iteration = 60")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+```{r}
+COs$SqaredRootTrainingTime = sqrt(COs$TrainingTime)
+meanCOsTime2 = aggregate(COs["SqaredRootTrainingTime"],by =COs[c("Algorithm","Iteration","N")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanCOsTime2=do.call(data.frame,meanCOsTime2)
+names(meanCOsTime2)[4:6]=c("SqaredRootTrainingTime","sd","Len")
+meanCOsTime2$se = meanCOsTime2$sd/sqrt(meanCOsTime2$Len)
+```
+
+
+
+```{r}
+png("COsNTime2.png",800,500)
+  
+g = ggplot(meanCOsTime2[meanCOsTime2$Iteration==400,],aes(N,SqaredRootTrainingTime,group=Algorithm,col=Algorithm))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=SqaredRootTrainingTime-se,ymax=SqaredRootTrainingTime+se),width=0.2)+
+  ylab("Sqared Root Training Time")+
+
+  theme(axis.text.x = element_text(angle=90, hjust=1))+
+  ggtitle("Evaluations of Training time of Four RO Algorithms On CountONes by N with max Iteration = 400")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left","top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+

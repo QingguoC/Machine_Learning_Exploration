@@ -1,0 +1,1695 @@
+---
+title: "Machine Learning Assignment 4 Plots"
+author: "Qingguo Chen"
+date: "November 19, 2017"
+output: pdf_document
+---
+```{r}
+library(ggplot2)
+library(reshape2)
+```
+
+```{r}
+viSmallIterationExp = read.csv("viSmallIterationExp.txt")
+viSmallIterationExp$maxIteration = as.factor(viSmallIterationExp$maxIteration)
+viSmallIterationExp$gamma = as.factor(viSmallIterationExp$gamma)
+meanRewardViSmallIterationExp = aggregate(viSmallIterationExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = viSmallIterationExp[c("maxIteration","gamma")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanRewardViSmallIterationExp = do.call(data.frame,meanRewardViSmallIterationExp)
+meanRewardViSmallIterationExp = meanRewardViSmallIterationExp[-c(5,8,11)]
+names(meanRewardViSmallIterationExp)[3:11]=c("maxDelta","maxDeltaSd","rewards", "rewardsSd", "numOfActions", "numOfActionsSd", "runningTime", "runningTimeSd", "Len")
+meanRewardViSmallIterationExp$maxDeltaSe = meanRewardViSmallIterationExp$maxDeltaSd/sqrt(meanRewardViSmallIterationExp$Len)
+meanRewardViSmallIterationExp$numOfActionsSe = meanRewardViSmallIterationExp$numOfActionsSd/sqrt(meanRewardViSmallIterationExp$Len)
+meanRewardViSmallIterationExp$rewardsSe = meanRewardViSmallIterationExp$rewardsSd/sqrt(meanRewardViSmallIterationExp$Len)
+meanRewardViSmallIterationExp$runningTimeSe = meanRewardViSmallIterationExp$runningTimeSd/sqrt(meanRewardViSmallIterationExp$Len)
+```
+
+
+```{r}
+png("SmallWorldRewardVIIterations.png",800,500)
+g = ggplot(meanRewardViSmallIterationExp,aes(maxIteration,rewards,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=rewards-rewardsSe,ymax=rewards+rewardsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Number of Value Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("SmallWorldNumActionVIIterations.png",800,500)
+g = ggplot(meanRewardViSmallIterationExp,aes(maxIteration,numOfActions,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=numOfActions-numOfActionsSe,ymax=numOfActions+numOfActionsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("numOfActions")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions after Number of Value Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("SmallWorldmaxDeltaVIIterations.png",800,500)
+g = ggplot(meanRewardViSmallIterationExp,aes(maxIteration,maxDelta,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=maxDelta-maxDeltaSe,ymax=maxDelta+maxDeltaSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of Utility in Value Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("SmallWorldTimeVIIterations.png",800,500)
+g = ggplot(meanRewardViSmallIterationExp,aes(maxIteration,runningTime,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=runningTime-runningTimeSe,ymax=runningTime+runningTimeSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Running Time of Value Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+viLargeIterationExp = read.csv("viLargeIterationExp.txt")
+viLargeIterationExp$maxIteration = as.factor(viLargeIterationExp$maxIteration)
+viLargeIterationExp$gamma = as.factor(viLargeIterationExp$gamma)
+meanRewardViLargeIterationExp = aggregate(viLargeIterationExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = viLargeIterationExp[c("maxIteration","gamma")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanRewardViLargeIterationExp = do.call(data.frame,meanRewardViLargeIterationExp)
+meanRewardViLargeIterationExp = meanRewardViLargeIterationExp[-c(5,8,11)]
+names(meanRewardViLargeIterationExp)[3:11]=c("maxDelta","maxDeltaSd","rewards", "rewardsSd", "numOfActions", "numOfActionsSd", "runningTime", "runningTimeSd", "Len")
+meanRewardViLargeIterationExp$maxDeltaSe = meanRewardViLargeIterationExp$maxDeltaSd/sqrt(meanRewardViLargeIterationExp$Len)
+meanRewardViLargeIterationExp$numOfActionsSe = meanRewardViLargeIterationExp$numOfActionsSd/sqrt(meanRewardViLargeIterationExp$Len)
+meanRewardViLargeIterationExp$rewardsSe = meanRewardViLargeIterationExp$rewardsSd/sqrt(meanRewardViLargeIterationExp$Len)
+meanRewardViLargeIterationExp$runningTimeSe = meanRewardViLargeIterationExp$runningTimeSd/sqrt(meanRewardViLargeIterationExp$Len)
+```
+
+
+```{r}
+png("LargeWorldRewardVIIterations.png",800,500)
+g = ggplot(meanRewardViLargeIterationExp,aes(maxIteration,rewards,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=rewards-rewardsSe,ymax=rewards+rewardsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Number of Value Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("LargeWorldNumActionVIIterations.png",800,500)
+g = ggplot(meanRewardViLargeIterationExp,aes(maxIteration,numOfActions,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=numOfActions-numOfActionsSe,ymax=numOfActions+numOfActionsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("numOfActions")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions after Number of Value Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("LargeWorldmaxDeltaVIIterations.png",800,500)
+g = ggplot(meanRewardViLargeIterationExp,aes(maxIteration,maxDelta,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=maxDelta-maxDeltaSe,ymax=maxDelta+maxDeltaSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of Utility in Value Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("LargeWorldTimeVIIterations.png",800,500)
+g = ggplot(meanRewardViLargeIterationExp,aes(maxIteration,runningTime,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=runningTime-runningTimeSe,ymax=runningTime+runningTimeSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Running Time of Value Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+#Policy Iteration
+
+```{r}
+piSmallIterationExp = read.csv("piSmallIterationExp.txt")
+piSmallIterationExp$maxIteration = as.factor(piSmallIterationExp$maxIteration)
+piSmallIterationExp$gamma = as.factor(piSmallIterationExp$gamma)
+meanRewardPiSmallIterationExp = aggregate(piSmallIterationExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = piSmallIterationExp[c("maxIteration","gamma")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanRewardPiSmallIterationExp = do.call(data.frame,meanRewardPiSmallIterationExp)
+meanRewardPiSmallIterationExp = meanRewardPiSmallIterationExp[-c(5,8,11)]
+names(meanRewardPiSmallIterationExp)[3:11]=c("maxDelta","maxDeltaSd","rewards", "rewardsSd", "numOfActions", "numOfActionsSd", "runningTime", "runningTimeSd", "Len")
+meanRewardPiSmallIterationExp$maxDeltaSe = meanRewardPiSmallIterationExp$maxDeltaSd/sqrt(meanRewardPiSmallIterationExp$Len)
+meanRewardPiSmallIterationExp$numOfActionsSe = meanRewardPiSmallIterationExp$numOfActionsSd/sqrt(meanRewardPiSmallIterationExp$Len)
+meanRewardPiSmallIterationExp$rewardsSe = meanRewardPiSmallIterationExp$rewardsSd/sqrt(meanRewardPiSmallIterationExp$Len)
+meanRewardPiSmallIterationExp$runningTimeSe = meanRewardPiSmallIterationExp$runningTimeSd/sqrt(meanRewardPiSmallIterationExp$Len)
+```
+
+
+```{r}
+png("SmallWorldRewardPIIterations.png",800,500)
+g = ggplot(meanRewardPiSmallIterationExp,aes(maxIteration,rewards,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=rewards-rewardsSe,ymax=rewards+rewardsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Number of Policy Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("SmallWorldNumActionPIIterations.png",800,500)
+g = ggplot(meanRewardPiSmallIterationExp,aes(maxIteration,numOfActions,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=numOfActions-numOfActionsSe,ymax=numOfActions+numOfActionsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("numOfActions")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions after Number of Policy Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("SmallWorldmaxDeltaPIIterations.png",800,500)
+g = ggplot(meanRewardPiSmallIterationExp,aes(maxIteration,maxDelta,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=maxDelta-maxDeltaSe,ymax=maxDelta+maxDeltaSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of Utility in Policy Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("SmallWorldTimePIIterations.png",800,500)
+g = ggplot(meanRewardPiSmallIterationExp,aes(maxIteration,runningTime,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=runningTime-runningTimeSe,ymax=runningTime+runningTimeSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Running Time of Policy Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+piLargeIterationExp = read.csv("piLargeIterationExp.txt")
+piLargeIterationExp$maxIteration = as.factor(piLargeIterationExp$maxIteration)
+piLargeIterationExp$gamma = as.factor(piLargeIterationExp$gamma)
+meanRewardPiLargeIterationExp = aggregate(piLargeIterationExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = piLargeIterationExp[c("maxIteration","gamma")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanRewardPiLargeIterationExp = do.call(data.frame,meanRewardPiLargeIterationExp)
+meanRewardPiLargeIterationExp = meanRewardPiLargeIterationExp[-c(5,8,11)]
+names(meanRewardPiLargeIterationExp)[3:11]=c("maxDelta","maxDeltaSd","rewards", "rewardsSd", "numOfActions", "numOfActionsSd", "runningTime", "runningTimeSd", "Len")
+meanRewardPiLargeIterationExp$maxDeltaSe = meanRewardPiLargeIterationExp$maxDeltaSd/sqrt(meanRewardPiLargeIterationExp$Len)
+meanRewardPiLargeIterationExp$numOfActionsSe = meanRewardPiLargeIterationExp$numOfActionsSd/sqrt(meanRewardPiLargeIterationExp$Len)
+meanRewardPiLargeIterationExp$rewardsSe = meanRewardPiLargeIterationExp$rewardsSd/sqrt(meanRewardPiLargeIterationExp$Len)
+meanRewardPiLargeIterationExp$runningTimeSe = meanRewardPiLargeIterationExp$runningTimeSd/sqrt(meanRewardPiLargeIterationExp$Len)
+```
+
+
+```{r}
+png("LargeWorldRewardPIIterations.png",800,500)
+g = ggplot(meanRewardPiLargeIterationExp,aes(maxIteration,rewards,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=rewards-rewardsSe,ymax=rewards+rewardsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Number of Policy Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("LargeWorldNumActionPIIterations.png",800,500)
+g = ggplot(meanRewardPiLargeIterationExp,aes(maxIteration,numOfActions,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=numOfActions-numOfActionsSe,ymax=numOfActions+numOfActionsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("numOfActions")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions after Number of Policy Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("LargeWorldmaxDeltaPIIterations.png",800,500)
+g = ggplot(meanRewardPiLargeIterationExp,aes(maxIteration,maxDelta,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=maxDelta-maxDeltaSe,ymax=maxDelta+maxDeltaSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of Utility in Policy Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("LargeWorldTimePIIterations.png",800,500)
+g = ggplot(meanRewardPiLargeIterationExp,aes(maxIteration,runningTime,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=runningTime-runningTimeSe,ymax=runningTime+runningTimeSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Running Time of Policy Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.05, .8),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+#QLearning
+
+```{r}
+qSmallIterationGammaExp = read.csv("qSmallIterationGammaExp.txt")
+qSmallIterationGammaExp$maxIteration = as.factor(qSmallIterationGammaExp$maxIteration)
+qSmallIterationGammaExp$gamma = as.factor(qSmallIterationGammaExp$gamma)
+meanRewardQSmallIterationGammaExp = aggregate(qSmallIterationGammaExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = qSmallIterationGammaExp[c("maxIteration","gamma")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanRewardQSmallIterationGammaExp = do.call(data.frame,meanRewardQSmallIterationGammaExp)
+meanRewardQSmallIterationGammaExp = meanRewardQSmallIterationGammaExp[-c(5,8,11)]
+names(meanRewardQSmallIterationGammaExp)[3:11]=c("maxDelta","maxDeltaSd","rewards", "rewardsSd", "numOfActions", "numOfActionsSd", "runningTime", "runningTimeSd", "Len")
+meanRewardQSmallIterationGammaExp$maxDeltaSe = meanRewardQSmallIterationGammaExp$maxDeltaSd/sqrt(meanRewardQSmallIterationGammaExp$Len)
+meanRewardQSmallIterationGammaExp$numOfActionsSe = meanRewardQSmallIterationGammaExp$numOfActionsSd/sqrt(meanRewardQSmallIterationGammaExp$Len)
+meanRewardQSmallIterationGammaExp$rewardsSe = meanRewardQSmallIterationGammaExp$rewardsSd/sqrt(meanRewardQSmallIterationGammaExp$Len)
+meanRewardQSmallIterationGammaExp$runningTimeSe = meanRewardQSmallIterationGammaExp$runningTimeSd/sqrt(meanRewardQSmallIterationGammaExp$Len)
+```
+
+
+```{r}
+png("SmallWorldRewardQIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationGammaExp,aes(maxIteration,rewards,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=rewards-rewardsSe,ymax=rewards+rewardsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Number of QLearing Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("SmallWorldNumActionQIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationGammaExp,aes(maxIteration,numOfActions,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=numOfActions-numOfActionsSe,ymax=numOfActions+numOfActionsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("numOfActions")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions after QLearning Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("SmallWorldmaxDeltaQIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationGammaExp,aes(maxIteration,maxDelta,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=maxDelta-maxDeltaSe,ymax=maxDelta+maxDeltaSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of Q value in QLearning Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("SmallWorldTimeQIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationGammaExp,aes(maxIteration,runningTime,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=runningTime-runningTimeSe,ymax=runningTime+runningTimeSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Running Time of QLearning Iteration for Small Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+qLargeIterationGammaExp = read.csv("qLargeIterationGammaExp.txt")
+qLargeIterationGammaExp$maxIteration = as.factor(qLargeIterationGammaExp$maxIteration)
+qLargeIterationGammaExp$gamma = as.factor(qLargeIterationGammaExp$gamma)
+meanRewardQLargeIterationGammaExp = aggregate(qLargeIterationGammaExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = qLargeIterationGammaExp[c("maxIteration","gamma")],function(X) c(mean=mean(X),sd=sd(X),len=length(X)) )
+meanRewardQLargeIterationGammaExp = do.call(data.frame,meanRewardQLargeIterationGammaExp)
+meanRewardQLargeIterationGammaExp = meanRewardQLargeIterationGammaExp[-c(5,8,11)]
+names(meanRewardQLargeIterationGammaExp)[3:11]=c("maxDelta","maxDeltaSd","rewards", "rewardsSd", "numOfActions", "numOfActionsSd", "runningTime", "runningTimeSd", "Len")
+meanRewardQLargeIterationGammaExp$maxDeltaSe = meanRewardQLargeIterationGammaExp$maxDeltaSd/sqrt(meanRewardQLargeIterationGammaExp$Len)
+meanRewardQLargeIterationGammaExp$numOfActionsSe = meanRewardQLargeIterationGammaExp$numOfActionsSd/sqrt(meanRewardQLargeIterationGammaExp$Len)
+meanRewardQLargeIterationGammaExp$rewardsSe = meanRewardQLargeIterationGammaExp$rewardsSd/sqrt(meanRewardQLargeIterationGammaExp$Len)
+meanRewardQLargeIterationGammaExp$runningTimeSe = meanRewardQLargeIterationGammaExp$runningTimeSd/sqrt(meanRewardQLargeIterationGammaExp$Len)
+```
+
+
+```{r}
+png("LargeWorldRewardQIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationGammaExp,aes(maxIteration,rewards,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=rewards-rewardsSe,ymax=rewards+rewardsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Number of QLearing Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("LargeWorldNumActionQIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationGammaExp,aes(maxIteration,numOfActions,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=numOfActions-numOfActionsSe,ymax=numOfActions+numOfActionsSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("numOfActions")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions after QLearning Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("LargeWorldmaxDeltaQIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationGammaExp,aes(maxIteration,maxDelta,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=maxDelta-maxDeltaSe,ymax=maxDelta+maxDeltaSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of Q value in QLearning Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("LargeWorldTimeQIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationGammaExp,aes(maxIteration,runningTime,group=gamma,col=gamma))+geom_point()+
+  geom_line()+
+  geom_errorbar(aes(ymin=runningTime-runningTimeSe,ymax=runningTime+runningTimeSe),width=0.2)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Running Time of QLearning Iteration for Large Grid World")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+#epsilon
+
+```{r}
+qSmallIterationEpsilonExp = read.csv("qSmallIterationEpsilonExp.txt")
+qSmallIterationEpsilonExp$epsilon = as.factor(qSmallIterationEpsilonExp$epsilon)
+meanRewardQSmallIterationEpsilonExp = aggregate(qSmallIterationEpsilonExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = qSmallIterationEpsilonExp[c("iteration","epsilon")],function(X) c(mean=mean(X),len=length(X)) )
+meanRewardQSmallIterationEpsilonExp = do.call(data.frame,meanRewardQSmallIterationEpsilonExp)
+meanRewardQSmallIterationEpsilonExp = meanRewardQSmallIterationEpsilonExp[-c(4,6,8)]
+names(meanRewardQSmallIterationEpsilonExp)[3:7]=c("maxDelta","rewards", "numOfActions", "runningTime",  "Len")
+
+
+```
+
+```{r}
+png("SmallWorldRewardsQEpsilonIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationEpsilonExp, aes(iteration, rewards, color = epsilon , group = epsilon )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("Rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards of QLearning Iteration for Small Grid World with different Epsilon")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+```{r}
+png("SmallWorldnumOfActionsQEpsilonIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationEpsilonExp, aes(iteration, numOfActions, color = epsilon , group = epsilon )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("numOfActions")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions of QLearning Iteration for Small Grid World with different Epsilon")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("SmallWorldmaxDeltaQEpsilonIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationEpsilonExp, aes(iteration, maxDelta, color = epsilon , group = epsilon )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of QLearning Iteration for Small Grid World with different Epsilon")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+```{r}
+png("SmallWorldrunningTimeQEpsilonIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationEpsilonExp, aes(iteration, runningTime, color = epsilon , group = epsilon )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("runningTime of QLearning Iteration for Small Grid World with different Epsilon")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+```{r}
+qLargeIterationEpsilonExp = read.csv("qLargeIterationEpsilonExp.txt")
+qLargeIterationEpsilonExp$epsilon = as.factor(qLargeIterationEpsilonExp$epsilon)
+meanRewardQLargeIterationEpsilonExp = aggregate(qLargeIterationEpsilonExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = qLargeIterationEpsilonExp[c("iteration","epsilon")],function(X) c(mean=mean(X),len=length(X)) )
+meanRewardQLargeIterationEpsilonExp = do.call(data.frame,meanRewardQLargeIterationEpsilonExp)
+meanRewardQLargeIterationEpsilonExp = meanRewardQLargeIterationEpsilonExp[-c(4,6,8)]
+names(meanRewardQLargeIterationEpsilonExp)[3:7]=c("maxDelta","rewards", "numOfActions", "runningTime",  "Len")
+
+
+```
+
+```{r}
+png("LargeWorldRewardsQEpsilonIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationEpsilonExp, aes(iteration, rewards, color = epsilon , group = epsilon )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("Rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards of QLearning Iteration for Large Grid World with different Epsilon")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("LargeWorldmaxDeltaQEpsilonIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationEpsilonExp, aes(iteration, maxDelta, color = epsilon , group = epsilon )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of QLearning Iteration for Large Grid World with different Epsilon")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+```{r}
+png("LargeWorldrunningTimeQEpsilonIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationEpsilonExp, aes(iteration, runningTime, color = epsilon , group = epsilon )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("runningTime of QLearning Iteration for Large Grid World with different Epsilon")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+#learning rate
+
+```{r}
+qSmallIterationLearningRateExp = read.csv("qSmallIterationLearningRateExp.txt")
+qSmallIterationLearningRateExp$learningRate = as.factor(qSmallIterationLearningRateExp$learningRate)
+meanRewardQSmallIterationLearningRateExp = aggregate(qSmallIterationLearningRateExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = qSmallIterationLearningRateExp[c("iteration","learningRate")],function(X) c(mean=mean(X),len=length(X)) )
+meanRewardQSmallIterationLearningRateExp = do.call(data.frame,meanRewardQSmallIterationLearningRateExp)
+meanRewardQSmallIterationLearningRateExp = meanRewardQSmallIterationLearningRateExp[-c(4,6,8)]
+names(meanRewardQSmallIterationLearningRateExp)[3:7]=c("maxDelta","rewards", "numOfActions", "runningTime",  "Len")
+
+
+```
+
+```{r}
+png("SmallWorldRewardsQLearningRateIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationLearningRateExp, aes(iteration, rewards, color = learningRate , group = learningRate )) + geom_point(alpha=0.2) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("Rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards of QLearning Iteration for Small Grid World with different learningRates")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+```{r}
+png("SmallWorldnumOfActionsQLearningRateIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationLearningRateExp, aes(iteration, numOfActions, color = learningRate , group = learningRate )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("numOfActions")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions of QLearning Iteration for Small Grid World with different learningRates")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("SmallWorldmaxDeltaQLearningRateIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationLearningRateExp, aes(iteration, maxDelta, color = learningRate , group = learningRate )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of QLearning Iteration for Small Grid World with different learningRates")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+```{r}
+png("SmallWorldrunningTimeQLearningRateIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationLearningRateExp, aes(iteration, runningTime, color = learningRate , group = learningRate )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("runningTime of QLearning Iteration for Small Grid World with different learningRate")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+```{r}
+qLargeIterationLearningRateExp = read.csv("qLargeIterationLearningRateExp.txt")
+qLargeIterationLearningRateExp$learningRate = as.factor(qLargeIterationLearningRateExp$learningRate)
+meanRewardQLargeIterationLearningRateExp = aggregate(qLargeIterationLearningRateExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = qLargeIterationLearningRateExp[c("iteration","learningRate")],function(X) c(mean=mean(X),len=length(X)) )
+meanRewardQLargeIterationLearningRateExp = do.call(data.frame,meanRewardQLargeIterationLearningRateExp)
+meanRewardQLargeIterationLearningRateExp = meanRewardQLargeIterationLearningRateExp[-c(4,6,8)]
+names(meanRewardQLargeIterationLearningRateExp)[3:7]=c("maxDelta","rewards", "numOfActions", "runningTime",  "Len")
+
+
+```
+
+```{r}
+png("LargeWorldRewardsQLearningRateIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationLearningRateExp, aes(iteration, rewards, color = learningRate , group = learningRate )) + geom_point(alpha=0.2) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("Rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards of QLearning Iteration for Large Grid World with different learningRates")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+```{r}
+png("LargeWorldnumOfActionsQLearningRateIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationLearningRateExp, aes(iteration, numOfActions, color = learningRate , group = learningRate )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("numOfActions")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions of QLearning Iteration for Large Grid World with different learningRates")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("LargeWorldmaxDeltaQLearningRateIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationLearningRateExp, aes(iteration, maxDelta, color = learningRate , group = learningRate )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of QLearning Iteration for Large Grid World with different learningRates")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+```{r}
+png("LargeWorldrunningTimeQLearningRateIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationLearningRateExp, aes(iteration, runningTime, color = learningRate , group = learningRate )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("runningTime of QLearning Iteration for Large Grid World with different learningRate")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+
+```
+
+
+
+#intiQ
+
+```{r}
+qSmallIterationInitQExp = read.csv("qSmallIterationInitQExp.txt")
+qSmallIterationInitQExp$initQ= as.factor(qSmallIterationInitQExp$initQ)
+meanRewardQSmallIterationInitQExp = aggregate(qSmallIterationInitQExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = qSmallIterationInitQExp[c("iteration","initQ")],function(X) c(mean=mean(X),len=length(X)) )
+meanRewardQSmallIterationInitQExp = do.call(data.frame,meanRewardQSmallIterationInitQExp)
+meanRewardQSmallIterationInitQExp = meanRewardQSmallIterationInitQExp[-c(4,6,8)]
+names(meanRewardQSmallIterationInitQExp)[3:7]=c("maxDelta","rewards", "numOfActions", "runningTime",  "Len")
+
+
+```
+
+```{r}
+png("SmallWorldRewardsQInitQIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationInitQExp, aes(iteration, rewards, color = initQ , group = initQ )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("Rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards of QLearning Iteration for Small Grid World with different initQ")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+```{r}
+png("SmallWorldnumOfActionsQInitQIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationInitQExp, aes(iteration, numOfActions, color = initQ , group = initQ )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("numOfActions")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions of QLearning Iteration for Small Grid World with different initQ")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("SmallWorldmaxDeltaQInitQIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationInitQExp, aes(iteration, maxDelta, color = initQ , group = initQ )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of QLearning Iteration for Small Grid World with different initQ")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+```{r}
+png("SmallWorldrunningTimeQInitQIterations.png",800,500)
+g = ggplot(meanRewardQSmallIterationInitQExp, aes(iteration, runningTime, color = initQ , group = initQ )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("runningTime of QLearning Iteration for Small Grid World with different initQ")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+```{r}
+qLargeIterationInitQExp = read.csv("qLargeIterationInitQExp.txt")
+qLargeIterationInitQExp$initQ= as.factor(qLargeIterationInitQExp$initQ)
+
+meanRewardQLargeIterationInitQExp = aggregate(qLargeIterationInitQExp[c("lastMaxDelta","rewards","numOfActions", "runningTime")],by = qLargeIterationInitQExp[c("iteration","initQ")],function(X) c(mean=mean(X),len=length(X)) )
+meanRewardQLargeIterationInitQExp = do.call(data.frame,meanRewardQLargeIterationInitQExp)
+meanRewardQLargeIterationInitQExp = meanRewardQLargeIterationInitQExp[-c(4,6,8)]
+names(meanRewardQLargeIterationInitQExp)[3:7]=c("maxDelta","rewards", "numOfActions", "runningTime",  "Len")
+
+
+```
+
+```{r}
+png("LargeWorldRewardsQInitQIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationInitQExp, aes(iteration, rewards, color = initQ , group = initQ )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("Rewards")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards of QLearning Iteration for Large Grid World with different initQ")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("LargeWorldnumOfActionsQInitQIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationInitQExp, aes(iteration, numOfActions, color = initQ , group = initQ )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("numOfActions")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions of QLearning Iteration for Large Grid World with different initQ")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("LargeWorldmaxDeltaQInitQIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationInitQExp, aes(iteration, maxDelta, color = initQ , group = initQ )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("maxDelta")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("maxDelta of QLearning Iteration for Large Grid World with different initQ")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+```{r}
+png("LargeWorldrunningTimeQInitQIterations.png",800,500)
+g = ggplot(meanRewardQLargeIterationInitQExp, aes(iteration, runningTime, color = initQ , group = initQ )) + geom_point(alpha=0.5) +stat_smooth(size=1.5, method = "loess", level = 0.95, fullrange = TRUE, se = FALSE)+
+  xlab("Iteration")+
+  ylab("runningTime")+
+  scale_y_continuous()+
+  theme(axis.text.x = element_text())+
+  ggtitle("runningTime of QLearning Iteration for Large Grid World with different initQ")+
+  theme(
+    legend.position = c(.95, .8),
+    legend.justification = c("right", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2))) 
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+viSmallIncentiveExp = read.csv("viSmallIncentiveExp.txt")
+viSmallIncentiveExp$incentive = as.factor(viSmallIncentiveExp$incentive)
+png("SmallWorldRewardVIIncentives.png",800,500)
+g = ggplot(viSmallIncentiveExp,aes(incentive,rewards,fill=incentive))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Number of Value Iteration for Small Grid World with incentives")+
+  theme(
+    legend.position = c(.05, .05),
+    legend.justification = c("left", "bottom"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+
+```{r}
+png("SmallWorldNumOfActionsVIIncentives.png",800,500)
+g = ggplot(viSmallIncentiveExp,aes(incentive,numOfActions,fill=incentive))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions after Value Iteration for Small Grid World with incentives")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+piSmallIncentiveExp = read.csv("piSmallIncentiveExp.txt")
+piSmallIncentiveExp$incentive = as.factor(piSmallIncentiveExp$incentive)
+png("SmallWorldRewardPIIncentives.png",800,500)
+g = ggplot(piSmallIncentiveExp,aes(incentive,rewards,fill=incentive))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Number of Policy Iteration for Small Grid World with incentives")+
+  theme(
+    legend.position = c(.05, .05),
+    legend.justification = c("left", "bottom"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+
+
+```{r}
+png("SmallWorldNumOfActionsPIIncentives.png",800,500)
+g = ggplot(piSmallIncentiveExp,aes(incentive,numOfActions,fill=incentive))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("numOfActions after Policy Iteration for Small Grid World with incentives")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.3)),
+    axis.title = element_text(size = rel(1.4)),
+    plot.title = element_text(size = rel(1.5)))
+print(g)
+dev.off()
+print(g)
+```
+
+#convergence analysis
+
+```{r}
+convergenceSmallWorldExp = read.csv("convergenceSmallWorldExp.txt")
+convergenceSmallWorldExp$maxDelta = as.factor(convergenceSmallWorldExp$maxDelta)
+convergenceSmallWorldExp$strategy = factor(convergenceSmallWorldExp$strategy, levels(convergenceSmallWorldExp$strategy)[c(3,1,2)] )
+convergenceSmallWorldExp$timePerIteration = convergenceSmallWorldExp$runningTime/convergenceSmallWorldExp$maxIteration
+```
+
+
+```{r}
+png("SmallWorldNumIterationConverge.png",800,500)
+g = ggplot(convergenceSmallWorldExp,aes(maxDelta ,maxIteration,color=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Number of iteration to Converge after RLs for Small Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("SmallWorldRewardsConverge.png",800,500)
+g = ggplot(convergenceSmallWorldExp,aes(maxDelta ,rewards,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Converge after RLs for Small Grid World")+
+  theme(
+    legend.position = c(.05, .05),
+    legend.justification = c("left", "bottom"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("SmallWorldTimeConverge.png",800,500)
+g = ggplot(convergenceSmallWorldExp,aes(maxDelta ,runningTime,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Time to Converge after RLs for Small Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("SmallWorldTimePerIterationConverge.png",800,500)
+g = ggplot(convergenceSmallWorldExp,aes(maxDelta ,timePerIteration,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Time Per Iteration of RLs for Small Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+convergenceLargeWorldExp = read.csv("convergenceLargeWorldExp.txt")
+convergenceLargeWorldExp$maxDelta = as.factor(convergenceLargeWorldExp$maxDelta)
+convergenceLargeWorldExp$strategy = factor(convergenceLargeWorldExp$strategy, levels(convergenceLargeWorldExp$strategy)[c(3,1,2)] )
+convergenceLargeWorldExp$timePerIteration = convergenceLargeWorldExp$runningTime/convergenceLargeWorldExp$maxIteration
+```
+
+
+```{r}
+png("LargeWorldNumIterationConverge.png",800,500)
+g = ggplot(convergenceLargeWorldExp,aes(maxDelta ,maxIteration,color=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Number of Iteration to Converge after RLs for Large Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("LargeWorldRewardsConverge.png",800,500)
+g = ggplot(convergenceLargeWorldExp,aes(maxDelta ,rewards,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Converge after RLs for Large Grid World")+
+  theme(
+    legend.position = c(.05, .05),
+    legend.justification = c("left", "bottom"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("LargeWorldTimeConverge.png",800,500)
+g = ggplot(convergenceLargeWorldExp,aes(maxDelta ,runningTime,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Time to Converge after RLs for Large Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("LargeWorldTimePerIterationConverge.png",800,500)
+g = ggplot(convergenceLargeWorldExp,aes(maxDelta ,timePerIteration,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Time Per Iteration of RLs for Large Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+#T analysis
+
+```{r}
+TConvergenceSmallWorldExp = read.csv("TConvergenceSmallWorldExp.txt")
+TConvergenceSmallWorldExp$T = as.factor(TConvergenceSmallWorldExp$T)
+TConvergenceSmallWorldExp$strategy = factor(TConvergenceSmallWorldExp$strategy, levels(TConvergenceSmallWorldExp$strategy)[c(3,1,2)] )
+TConvergenceSmallWorldExp$timePerIteration = TConvergenceSmallWorldExp$runningTime/TConvergenceSmallWorldExp$maxIteration
+```
+
+
+```{r}
+png("TSmallWorldNumIterationConverge.png",800,500)
+g = ggplot(TConvergenceSmallWorldExp,aes(T ,maxIteration,color=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Iteration to Converge after RLs with different Ts for Small Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("TSmallWorldRewardsConverge.png",800,500)
+g = ggplot(TConvergenceSmallWorldExp,aes(T ,rewards,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Converge after RLs with different Ts for Small Grid World")+
+  theme(
+    legend.position = c(.05, .05),
+    legend.justification = c("left", "bottom"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("TSmallWorldTimeConverge.png",800,500)
+g = ggplot(TConvergenceSmallWorldExp,aes(T ,runningTime,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Time to Converge after RLs with different Ts for Small Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("TSmallWorldTimePerIterationConverge.png",800,500)
+g = ggplot(TConvergenceSmallWorldExp,aes(T ,timePerIteration,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Time Per Iteration of RLs with different Ts for Small Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+TConvergenceLargeWorldExp = read.csv("TConvergenceLargeWorldExp.txt")
+TConvergenceLargeWorldExp$T = as.factor(TConvergenceLargeWorldExp$T)
+TConvergenceLargeWorldExp$strategy = factor(TConvergenceLargeWorldExp$strategy, levels(TConvergenceLargeWorldExp$strategy)[c(3,1,2)] )
+TConvergenceLargeWorldExp$timePerIteration = TConvergenceLargeWorldExp$runningTime/TConvergenceLargeWorldExp$maxIteration
+```
+
+
+```{r}
+png("TLargeWorldNumIterationConverge.png",800,500)
+g = ggplot(TConvergenceLargeWorldExp,aes(T ,maxIteration,color=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Iteration to Converge after RLs with different Ts for Large Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("TLargeWorldRewardsConverge.png",800,500)
+g = ggplot(TConvergenceLargeWorldExp,aes(T ,rewards,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Rewards after Converge after RLs with different Ts for Large Grid World")+
+  theme(
+    legend.position = c(.05, .05),
+    legend.justification = c("left", "bottom"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+
+```{r}
+png("TLargeWorldTimeConverge.png",800,500)
+g = ggplot(TConvergenceLargeWorldExp,aes(T ,runningTime,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Time to Converge after RLs with different Ts for Large Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
+
+```{r}
+png("TLargeWorldTimePerIterationConverge.png",800,500)
+g = ggplot(TConvergenceLargeWorldExp,aes(T ,timePerIteration,fill=strategy))+geom_boxplot()+
+  
+  scale_x_discrete()+
+  theme(axis.text.x = element_text())+
+  ggtitle("Time Per Iteration of RLs with different Ts for Large Grid World")+
+  theme(
+    legend.position = c(.05, .95),
+    legend.justification = c("left", "top"),
+    legend.box.just = "left",
+    legend.margin = margin(6, 6, 6, 6),
+    axis.text = element_text(size = rel(1.8)),
+    axis.title = element_text(size = rel(2)),
+    plot.title = element_text(size = rel(2)))
+print(g)
+dev.off()
+print(g)
+```
